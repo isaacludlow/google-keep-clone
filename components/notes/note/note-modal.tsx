@@ -32,15 +32,29 @@ export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
     currentContent: string
   ): Promise<void> {
     if (originalTitle != currentTitle || originalContent != currentContent) {
-      const newNote: Note = {
-        title: currentTitle,
-        content: currentContent,
-      };
+      if (note?.id == undefined) {
+        const newNote: Note = {
+          title: currentTitle,
+          content: currentContent,
+        };
 
-      await fetch("api/note", {
-        method: "POST",
-        body: JSON.stringify(newNote),
-      });
+        await fetch("api/note", {
+          method: "POST",
+          body: JSON.stringify(newNote),
+        });
+      } else {
+        const updatedNote: Note = {
+          id: note.id,
+          title: currentTitle,
+          content: currentContent,
+        };
+
+        console.log(updatedNote);
+        await fetch(`api/note/${note.id}`, {
+          method: "PUT",
+          body: JSON.stringify(updatedNote),
+        });
+      }
     }
   }
 

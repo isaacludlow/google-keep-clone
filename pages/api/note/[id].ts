@@ -8,16 +8,13 @@ export default async function handler(
 ) {
   if (req.method === "PUT") {
     let { id } = req.query;
-    const { title, content } = req.body;
+    const { title, content } = JSON.parse(req.body);
+    console.log(title);
+    console.log(content);
 
     try {
-      id = id == undefined ? "" : id[0];
-      if (id.length == 0) {
-        throw new Error();
-      }
-
       const post = await prisma.note.update({
-        where: { id: id[0] },
+        where: { id: id as string },
         data: {
           title: title,
           content: content,
