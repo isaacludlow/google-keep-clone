@@ -1,24 +1,16 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import { Note } from "./note";
 import NoteCard from "./note/note-card";
+import useSWR from "swr";
 
-const notes: Note[] = [
-  {
-    id: 1,
-    title: "This is a title",
-    content:
-      "This is the content of this note. It's not that interesting tbh...",
-  },
-  {
-    id: 2,
-    title: "Another title of a note",
-    content:
-      "Here are my thoughts on poptarts. Poptarts are probably one of the best foods in existence. How long can this note get before it starts doing weird stuff?",
-  },
-];
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function NoteGrid() {
-  const noteCards = notes.map((note) => (
+  const { data, isLoading } = useSWR("/api/notes", fetcher);
+
+  if (!data) return <div>Loading...</div>;
+
+  const noteCards = data.map((note: Note) => (
     <NoteCard key={`note-${note.id}`} note={note}></NoteCard>
   ));
 
