@@ -28,8 +28,7 @@ export default function Navbar() {
       <NoteModal
         isOpen={isOpen}
         onClose={onClose}
-        title={""}
-        content={""}
+        note={{ title: "", content: "" }}
       ></NoteModal>
     </>
   );

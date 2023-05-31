@@ -1,4 +1,5 @@
 import {
+  Button,
   Editable,
   EditableInput,
   EditablePreview,
@@ -7,35 +8,47 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { Note } from "../note";
 
 interface NoteModelProps {
   isOpen: boolean;
   onClose(): void;
-  title: string;
-  content: string;
+  note: Note;
 }
 
-export default function NoteModal({
-  isOpen,
-  onClose,
-  title,
-  content,
-}: NoteModelProps) {
-  const [currentTitle, setCurrentTitle] = useState(title);
-  const [currentContent, setCurrentContent] = useState(content);
+export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
+  const [currentTitle, setCurrentTitle] = useState(note.title);
+  const [currentContent, setCurrentContent] = useState(note.content);
 
-  function onModalClose(
+  async function onModalClose(
     originalTitle: string,
     originalContent: string,
     currentTitle: string,
     currentContent: string
-  ): void {
+  ): Promise<void> {
     if (originalTitle != currentTitle || originalContent != currentContent) {
-      // TODO: Save to database.
+      const newNote: Note = {
+        title: currentTitle,
+        content: currentContent,
+      };
+
+      await fetch("api/note", {
+        method: "POST",
+        body: JSON.stringify(newNote),
+      });
+    }
+  }
+
+  async function deleteNote(noteId: string | undefined): Promise<void> {
+    if (noteId != undefined) {
+      await fetch(`api/note/${noteId}`, {
+        method: "DELETE",
+      });
     }
   }
 
@@ -44,7 +57,7 @@ export default function NoteModal({
       isOpen={isOpen}
       onClose={() => {
         onClose();
-        onModalClose(title, content, currentTitle, currentContent);
+        onModalClose(note.title, note.content, currentTitle, currentContent);
       }}
     >
       <ModalOverlay />
@@ -55,7 +68,7 @@ export default function NoteModal({
           <Editable
             placeholder="Title"
             selectAllOnFocus={false}
-            defaultValue={title}
+            defaultValue={note.title}
             onSubmit={(value) => {
               setCurrentTitle(value);
             }}
@@ -69,7 +82,7 @@ export default function NoteModal({
           <Editable
             placeholder="Take a note..."
             selectAllOnFocus={false}
-            defaultValue={content}
+            defaultValue={note.content}
             onSubmit={(value) => {
               setCurrentContent(value);
             }}
@@ -78,6 +91,18 @@ export default function NoteModal({
             <EditableTextarea />
           </Editable>
         </ModalBody>
+        <ModalFooter>
+          <Button
+            colorScheme="red"
+            mr={3}
+            onClick={() => {
+              deleteNote(note.id);
+              onClose();
+            }}
+          >
+            Delete
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

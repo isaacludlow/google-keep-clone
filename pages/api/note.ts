@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { title, content } = req.body;
+  const { title, content } = JSON.parse(req.body);
 
   const result = await prisma.note.create({
     data: {

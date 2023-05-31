@@ -13,25 +13,20 @@ interface NoteProps {
   note: Note;
 }
 
-export default function NoteCard({ note: { title, content } }: NoteProps) {
+export default function NoteCard({ note }: NoteProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Card onClick={onOpen}>
       <CardHeader>
-        <Heading size="md">{title}</Heading>
+        <Heading size="md">{note.title}</Heading>
       </CardHeader>
 
       <CardBody>
-        <Text noOfLines={4}>{content}</Text>
+        <Text noOfLines={4}>{note.content}</Text>
       </CardBody>
 
-      <NoteModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={title}
-        content={content}
-      ></NoteModal>
+      <NoteModal isOpen={isOpen} onClose={onClose} note={note}></NoteModal>
     </Card>
   );
 }
