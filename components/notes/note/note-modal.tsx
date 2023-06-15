@@ -31,38 +31,20 @@ export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
     currentTitle: string,
     currentContent: string
   ): Promise<void> {
-    if (originalTitle != currentTitle || originalContent != currentContent) {
-      if (note?.id == undefined) {
-        const newNote: Note = {
-          title: currentTitle,
-          content: currentContent,
-        };
-
-        await fetch("api/note", {
-          method: "POST",
-          body: JSON.stringify(newNote),
-        });
+    if (
+      noteHasChanged(
+        originalTitle,
+        currentTitle,
+        originalContent,
+        currentContent
+      )
+    ) {
+      // Should I pass in a note parameter so the method signature makes it clear what the onModalClose function needs?
+      if (newNote(note)) {
+        await createNewNote(currentTitle, currentContent);
       } else {
-        const updatedNote: Note = {
-          id: note.id,
-          title: currentTitle,
-          content: currentContent,
-        };
-
-        console.log(updatedNote);
-        await fetch(`api/note/${note.id}`, {
-          method: "PUT",
-          body: JSON.stringify(updatedNote),
-        });
+        await updateNote(note, currentTitle, currentContent);
       }
-    }
-  }
-
-  async function deleteNote(noteId: string | undefined): Promise<void> {
-    if (noteId != undefined) {
-      await fetch(`api/note/${noteId}`, {
-        method: "DELETE",
-      });
     }
   }
 
@@ -120,4 +102,55 @@ export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
       </ModalContent>
     </Modal>
   );
+}
+
+function noteHasChanged(
+  originalTitle: string,
+  currentTitle: string,
+  originalContent: string,
+  currentContent: string
+) {
+  return originalTitle != currentTitle || originalContent != currentContent;
+}
+
+function newNote(note: Note) {
+  return note?.id == undefined;
+}
+
+async function createNewNote(currentTitle: string, currentContent: string) {
+  const newNote: Note = {
+    title: currentTitle,
+    content: currentContent,
+  };
+
+  await fetch("api/note", {
+    method: "POST",
+    body: JSON.stringify(newNote),
+  });
+}
+
+async function updateNote(
+  note: Note,
+  currentTitle: string,
+  currentContent: string
+) {
+  const updatedNote: Note = {
+    id: note.id,
+    title: currentTitle,
+    content: currentContent,
+  };
+
+  console.log(updatedNote);
+  await fetch(`api/note/${note.id}`, {
+    method: "PUT",
+    body: JSON.stringify(updatedNote),
+  });
+}
+
+async function deleteNote(noteId: string | undefined): Promise<void> {
+  if (noteId != undefined) {
+    await fetch(`api/note/${noteId}`, {
+      method: "DELETE",
+    });
+  }
 }

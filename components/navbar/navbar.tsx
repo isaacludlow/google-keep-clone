@@ -10,7 +10,11 @@ export default function Navbar() {
         pr={5}
         pl={5}
         align={"center"}
-        style={{ height: "3em", width: "100%", borderBottom: "1px solid gray" }}
+        style={{
+          height: "4em",
+          width: "100%",
+          borderBottom: "1px solid #D6D6D6",
+        }}
       >
         <Heading>Google Keep clone</Heading>
         <Spacer></Spacer>

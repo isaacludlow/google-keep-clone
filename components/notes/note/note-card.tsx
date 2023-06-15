@@ -9,6 +9,8 @@ import {
 import { Note } from "../note";
 import NoteModal from "./note-modal";
 
+// Question: Should I define my own type for a note or use the type inferred from the prisma schema?
+// i.e. import { Note } from "@prisma/client";
 interface NoteProps {
   note: Note;
 }

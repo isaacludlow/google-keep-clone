@@ -8,7 +8,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function NoteGrid() {
   const { data, isLoading } = useSWR("/api/notes", fetcher);
 
-  if (!data) return <div>Loading your notes...</div>;
+  if (isLoading) return <div>Loading your notes...</div>;
 
   const noteCards = data.map((note: Note) => (
     <NoteCard key={`note-${note.id}`} note={note}></NoteCard>
