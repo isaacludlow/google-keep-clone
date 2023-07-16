@@ -12,7 +12,8 @@ datasource db {
 }
 
 model Note {
-  id      String @id @default(uuid())
-  title   String
-  content String
+  id              String   @id @default(uuid())
+  dateCreated     DateTime
+  dateLastUpdated DateTime
+  content         String
 }
