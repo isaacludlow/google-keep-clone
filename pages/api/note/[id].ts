@@ -8,16 +8,14 @@ export default async function handler(
 ) {
   if (req.method === "PUT") {
     let { id } = req.query;
-    const { title, content } = JSON.parse(req.body);
-    console.log(title);
-    console.log(content);
+    const { dateLastUpdated, content } = JSON.parse(req.body);
 
     try {
       const post = await prisma.note.update({
         where: { id: id as string },
         data: {
-          title: title,
-          content: content,
+          content: JSON.stringify(content),
+          dateLastUpdated: dateLastUpdated,
         },
       });
 

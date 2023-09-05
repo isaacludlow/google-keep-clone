@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Heading,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Card, CardBody, Text, useDisclosure } from "@chakra-ui/react";
 import { Note } from "../note";
 import NoteModal from "./note-modal";
 
@@ -18,12 +11,8 @@ export default function NoteCard({ note }: NoteProps) {
 
   return (
     <Card onClick={onOpen}>
-      <CardHeader>
-        <Heading size="md">{note.title}</Heading>
-      </CardHeader>
-
       <CardBody>
-        <Text noOfLines={4}>{note.content}</Text>
+        <Text noOfLines={4}>{note.title}</Text>
       </CardBody>
 
       <NoteModal isOpen={isOpen} onClose={onClose} note={note}></NoteModal>

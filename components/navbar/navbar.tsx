@@ -47,12 +47,12 @@ export default function Navbar() {
         }}
       >
         {navbarHeading}
-        <InputGroup className="ml-3">
+        {/* <InputGroup className="ml-3">
           <InputLeftElement pointerEvents="none">
             <span className="material-symbols-outlined">search</span>
           </InputLeftElement>
           <Input variant="filled" width="auto" placeholder="Search"></Input>
-        </InputGroup>
+        </InputGroup> */}
 
         <Spacer></Spacer>
       </Flex>

@@ -3,8 +3,6 @@ import Navbar from "../components/navbar/navbar";
 import NoteGrid from "@/components/notes/note-grid";
 import Sidebar from "@/components/sidebar/sidebar";
 import NoteModal from "@/components/notes/note/note-modal";
-import { useState } from "react";
-import TipTap from "@/components/tiptap/tip-tap-editor";
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();

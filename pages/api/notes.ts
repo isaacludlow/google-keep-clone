@@ -1,5 +1,5 @@
-import { Note } from "@/components/notes/note";
 import { prisma } from "@/db";
+import { Note } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -7,6 +7,7 @@ export default async function handler(
   res: NextApiResponse<Note[]>
 ) {
   const notes = await prisma.note.findMany();
+  notes.forEach((note) => (note.content = JSON.parse(note.content)));
 
   res.status(200).json(notes);
 }

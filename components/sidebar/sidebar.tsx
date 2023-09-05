@@ -27,7 +27,7 @@ export default function Sidebar() {
         labelText="Notes"
         checkedInitially={true}
       ></SidebarLabel>
-      {...noteTags}
+      {/* {...noteTags}
       <SidebarLabel
         radioId="archive-tab"
         iconName="archive"
@@ -37,7 +37,7 @@ export default function Sidebar() {
         radioId="trash-tab"
         iconName="delete"
         labelText="Trash"
-      ></SidebarLabel>
+      ></SidebarLabel> */}
     </div>
   );
 }

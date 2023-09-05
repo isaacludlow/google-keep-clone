@@ -5,12 +5,14 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { Note } from "../notes/note";
 
 interface TiptapEditorProps {
   setEditorRef(currentRef: any): any;
+  note: Note | null;
 }
 
-const TiptapEditor = ({ setEditorRef }: TiptapEditorProps) => {
+const TiptapEditor = ({ setEditorRef, note }: TiptapEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -36,7 +38,12 @@ const TiptapEditor = ({ setEditorRef }: TiptapEditorProps) => {
     },
   });
 
-  setEditorRef(editor);
+  // if (note) {
+  //   console.log("asdf");
+  //   editor?.commands.setContent(note.content);
+  // }
+
+  // setEditorRef(editor);
 
   return <EditorContent editor={editor} />;
 };
