@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider     = "sqlite"
-  url          = env("file:./googlekeepclone.db")
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
