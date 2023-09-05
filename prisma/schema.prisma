@@ -12,8 +12,9 @@ datasource db {
 }
 
 model Note {
-  id              String   @id @default(uuid())
-  dateCreated     DateTime
-  dateLastUpdated DateTime
+  id              String    @id @default(uuid())
+  dateCreated     DateTime?
+  dateLastUpdated DateTime?
+  title           String
   content         String
 }
