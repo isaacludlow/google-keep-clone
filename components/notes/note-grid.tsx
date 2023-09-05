@@ -11,7 +11,7 @@ export default function NoteGrid() {
 
   if (isLoading) return <div>Loading your notes...</div>;
 
-  const noteCards = notes.map((note: Note) => (
+  const noteCards = notes?.map((note: Note) => (
     <div className="w-72" key={`note-${note.id}`}>
       <NoteCard note={note}></NoteCard>
     </div>
