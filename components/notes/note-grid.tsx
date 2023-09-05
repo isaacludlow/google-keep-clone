@@ -10,8 +10,9 @@ export default function NoteGrid() {
   var notes = data;
 
   if (isLoading) return <div>Loading your notes...</div>;
+  if (!notes) return <div>Create your first note!</div>;
 
-  const noteCards = notes?.map((note: Note) => (
+  const noteCards = notes.map((note: Note) => (
     <div className="w-72" key={`note-${note.id}`}>
       <NoteCard note={note}></NoteCard>
     </div>
