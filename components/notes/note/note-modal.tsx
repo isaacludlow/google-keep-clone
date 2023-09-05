@@ -3,7 +3,6 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  EditableTextarea,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,27 +13,36 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Note } from "../note";
+import TiptapEditor from "@/components/tiptap/tip-tap-editor";
+import { Editor, EditorContent, JSONContent, useEditor } from "@tiptap/react";
+import Placeholder from "@tiptap/extension-placeholder";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import StarterKit from "@tiptap/starter-kit";
+import NoteGrid from "../note-grid";
+import { mutate } from "swr";
 
 interface NoteModelProps {
   isOpen: boolean;
   onClose(): void;
-  note: Note;
+  note: Note | null;
 }
 
 export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
-  const [currentTitle, setCurrentTitle] = useState(note.title);
-  const [currentContent, setCurrentContent] = useState(note.content);
+  // const [editorRef, setEditorRef] = useState<Editor>();
+  const isNewNote = !!note;
+  const [title, setTitle] = useState("");
 
   async function onModalClose(
-    originalTitle: string,
-    originalContent: string,
-    currentTitle: string,
-    currentContent: string
+    originalContent: JSONContent,
+    currentContent: JSONContent
   ): Promise<void> {
-    if (originalTitle != currentTitle || originalContent != currentContent) {
+    if (originalContent != currentContent) {
       if (note?.id == undefined) {
         const newNote: Note = {
-          title: currentTitle,
+          dateCreated: new Date(),
+          dateLastUpdated: new Date(),
+          title: title ?? "Untitled",
           content: currentContent,
         };
 
@@ -42,18 +50,21 @@ export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
           method: "POST",
           body: JSON.stringify(newNote),
         });
+        mutate("/api/notes");
       } else {
         const updatedNote: Note = {
           id: note.id,
-          title: currentTitle,
+          dateCreated: note.dateCreated,
+          dateLastUpdated: new Date(),
+          title: title ?? note?.title,
           content: currentContent,
         };
 
-        console.log(updatedNote);
         await fetch(`api/note/${note.id}`, {
           method: "PUT",
           body: JSON.stringify(updatedNote),
         });
+        mutate("/api/notes");
       }
     }
   }
@@ -63,60 +74,86 @@ export default function NoteModal({ isOpen, onClose, note }: NoteModelProps) {
       await fetch(`api/note/${noteId}`, {
         method: "DELETE",
       });
+      mutate("/api/notes");
     }
   }
 
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
+      Placeholder.configure({
+        placeholder: `Take a note. You can use regular markdown syntax to format your note`,
+        emptyEditorClass: "is-editor-empty",
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+    ],
+    autofocus: true,
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-sm sm:prose lg:prose-lg dark:prose-invert focus:outline-none",
+      },
+    },
+    content: note?.content,
+  });
+
   return (
     <Modal
+      size="2xl"
       isOpen={isOpen}
       onClose={() => {
+        if (editor) {
+          onModalClose(note?.content, editor.getJSON());
+        }
         onClose();
-        onModalClose(note.title, note.content, currentTitle, currentContent);
       }}
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalCloseButton />
-
         <ModalHeader>
-          <Editable
-            placeholder="Title"
-            selectAllOnFocus={false}
-            defaultValue={note.title}
-            onSubmit={(value) => {
-              setCurrentTitle(value);
-            }}
-          >
-            <EditablePreview />
-            <EditableInput />
-          </Editable>
+          <ModalCloseButton />
+          <ModalHeader>
+            <Editable
+              placeholder="Untitled"
+              selectAllOnFocus={false}
+              // Need to figure out why the title is being set to "title"
+              defaultValue={note?.title ?? ""}
+              onChange={(newTitle) => {
+                setTitle(newTitle);
+              }}
+            >
+              <EditablePreview />
+              <EditableInput />
+            </Editable>
+          </ModalHeader>
         </ModalHeader>
-
         <ModalBody>
-          <Editable
-            placeholder="Take a note..."
-            selectAllOnFocus={false}
-            defaultValue={note.content}
-            onSubmit={(value) => {
-              setCurrentContent(value);
-            }}
-          >
-            <EditablePreview />
-            <EditableTextarea />
-          </Editable>
+          {/* <TiptapEditor setEditorRef={setEditorRef} note={note}></TiptapEditor> */}
+          <EditorContent editor={editor} />
         </ModalBody>
-        <ModalFooter>
-          <Button
-            colorScheme="red"
-            mr={3}
-            onClick={() => {
-              deleteNote(note.id);
-              onClose();
-            }}
-          >
-            Delete
-          </Button>
-        </ModalFooter>
+
+        {isNewNote && (
+          <ModalFooter>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={() => {
+                deleteNote(note.id);
+                onClose();
+              }}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        )}
+        {!isNewNote && <div className="pb-5"></div>}
       </ModalContent>
     </Modal>
   );

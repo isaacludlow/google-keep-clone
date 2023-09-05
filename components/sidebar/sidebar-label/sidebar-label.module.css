@@ -1,0 +1,3 @@
+input[type="radio"].inputLabel:checked + label {
+  @apply bg-indigo-100;
+}
