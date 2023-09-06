@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## About
 
-This project was a first attempt at using react/next.js, prisma, and sqlite.
+This project was a first attempt at using react/next.js, prisma, and sqlite to create a basic notes app.
 
 ## Tech Stack
 
